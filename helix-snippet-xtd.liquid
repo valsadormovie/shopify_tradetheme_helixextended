@@ -1,0 +1,53 @@
+{% if schedule_enable == true %}
+  {% assign start = schedule_start | date: '%Y-%m-%d %H:%M' %} 
+  {% assign end = schedule_end | date: '%Y-%m-%d %H:%M' %}
+  {% assign today = "now" | date: '%Y-%m-%d %H:%M' %}
+  {% if request.design_mode %}
+     {% style %}
+      .show-shedule-{{ section.id }} {
+        opacity:0.7;
+      }
+      .show-shedule-{{ section.id }}:before {
+            content: 'Start: {{ schedule_start }} - End: {{ schedule_end }}';
+            padding-left:30px;
+            background: url(https://cdn.shopify.com/s/files/1/0535/3160/7203/files/9080620_calendar_time_icon_7146afc0-9c5a-4dbb-b746-a14ff9e30d68.svg?v=1719304783);
+            width: 351px;
+            height: 20px;
+            color: #000;
+            display: flex;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            background-size: auto;
+            background-repeat: no-repeat;
+            background-position: left;
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: 100;
+            background-color: #c0d5d7;
+            padding: 28px;
+            border-bottom-right-radius: 10px;
+            border-top-right-radius: 10px;
+            align-items: center;
+      }
+    {% endstyle %}    
+  {% else %}
+     {% style %}
+      .show-shedule-{{ section.id }} {
+        display:none!important;
+      }
+    {% endstyle %}
+    
+  {% endif %}
+  
+
+  {% if  start <= today and today <= end %}
+      {% style %}
+        .show-shedule-{{ section.id }} {
+          display:block!important;
+        }
+      {% endstyle %}
+  {% endif %}
+{% endif %} 
+
