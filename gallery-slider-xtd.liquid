@@ -1,0 +1,384 @@
+{{ 'flickity.css' | asset_url | stylesheet_tag }}
+{{ 'flickity-xtd.css' | asset_url | stylesheet_tag }}
+{{ 'flickity.js' | asset_url | script_tag }}
+
+{%- liquid
+	assign columnswidth = section.settings.columns
+    assign blockcount = section.blocks
+-%}
+
+<div class="bg-{{ section.id }} section-{{ section.id }}-padding gradient color-{{ section.settings.section_color_scheme }}">
+{%- if section.settings.bg-image != blank -%}   
+<style>
+.bg-{{ section.id }} {
+  background-image: url('{{ section.settings.bg-image | img_url: '2048x2048' }}');
+  {%- if section.settings.bg-size == "cover" -%} background-size: cover; {%- endif -%} 
+  {%- if section.settings.bg-size == "contain" -%} background-size: contain; {%- endif -%} 
+  {%- if section.settings.bg-position == "center" -%} background-position: center; {%- endif -%} 
+  {%- if section.settings.bg-position == "left" -%} background-position: left; {%- endif -%} 
+  {%- if section.settings.bg-position == "lefttop" -%} background-position: top left; {%- endif -%} 
+  {%- if section.settings.bg-position == "leftbottom" -%} background-position: bottom left; {%- endif -%} 
+  {%- if section.settings.bg-position == "right" -%} background-position: right; {%- endif -%} 
+  {%- if section.settings.bg-position == "righttop" -%} background-position: top right; {%- endif -%} 
+  {%- if section.settings.bg-position == "rightbottom" -%} background-position: bottom right; {%- endif -%} 
+  {% unless section.settings.is_fullwidth %}
+    border-radius: var(--border-radius-cards);
+    overflow:hidden;
+  {% endunless %}
+  border:none;
+  background-repeat:no-repeat;
+}  
+
+</style>
+{%- endif -%} 
+{%- if section.settings.section_bgcolor != "rgba(0,0,0,0)" -%}
+  <style>
+.bg-{{ section.id }} {
+  background-color: {{ section.settings.section_bgcolor }};
+}  
+    
+    
+ </style>
+{%- endif -%}  
+{%- style -%}
+.bg-{{ section.id }} h2 p {
+  margin:0!important;
+}
+
+  .bg-{{ section.id }} h2 {
+    margin-top:40px!important;
+  }
+  
+  .carousel {
+    box-shadow: none!important;  
+    margin-bottom:40px;
+  }
+  
+  .carousel-cell { 
+      display: flex;
+    align-items: center;
+    counter-increment: gallery-cell;
+    height: {{ columnswidth }}vw;
+  }
+
+  .carousel-cell img {
+    object-fit:cover;
+    top: 50%;
+    transform: translateY(-50%)
+      height: {{ columnswidth }}vw;
+    max-width: 100%;
+    max-width:{{ columnswidth }}vw;
+    height: auto; 
+    max-height: 100%;
+        margin: 5px;
+    border-radius: calc(var(--media-radius) - var(--media-border-width));
+  }
+
+   @media screen and (max-width: 750px) {
+      
+     
+       .carousel-cell { 
+          height: calc(100vw - 40px);
+        }
+      
+        .carousel-cell img {
+            height: calc(100vw - 40px);
+          max-width:calc(100vw - 40px);
+          
+        }
+   }
+{%- endstyle -%}
+
+{%- unless section.settings.title == blank -%}
+      <div class="title-wrapper-with-link title-wrapper--self-padded-mobile title-wrapper--no-top-margin">
+        <h2 class="title inline-richtext {{ section.settings.heading_size }}" style="width:100%;text-align:center;">
+          {{ section.settings.title }}
+        </h2>
+      </div>
+    {%- endunless -%}
+
+<div class="carousel" data-flickity='{ "cellAlign": "left", "contain": "true", {%- if section.settings.autoplay == "yes" -%}"autoPlay": "true",{%- endif -%} {%- if section.settings.infinitescroll == "yes" -%}"wrapAround": "true", "freeScroll": "true",{%- endif -%} "resize": "true", "lazyLoad": "6" }'>
+  {%- for block in section.blocks -%}
+    {%- case block.type -%}
+      
+      {%- when 'image' -%}
+        {%- if block.settings.image != blank -%}
+          <div class="carousel-cell">
+            <img class="imagedesktop" width="100%" height="auto" src="{{ block.settings.image | img_url: '2048x2048' }}" alt=""/>
+          </div>
+        {%- endif -%}  
+      
+    {%- endcase -%}
+  {%- endfor -%}
+
+  {%- if section.blocks.size > columns -%}
+          <div class="flickity-nav flickity-prev" tabindex="0">{% render 'svg-icons' with 'carousel-prev' %}</div>
+          <div class="flickity-nav flickity-next" tabindex="0">{% render 'svg-icons' with 'carousel-next' %}</div>
+        {%- endif -%}
+</div>
+  
+</div>
+<!--
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+  var flkty; // A Flickity instancát itt fogjuk eltárolni
+
+  function initializeFlickity() {
+    // Először ellenőrizzük, hogy a Flickity már létezik-e, és ha igen, megsemmisítjük, hogy újra tudjuk inicializálni
+    if (flkty) {
+      flkty.destroy();
+    }
+
+    // Itt inicializáljuk újra a Flickity-t
+    flkty = new Flickity('.carousel', {
+      cellAlign: 'left',
+      contain: true,
+      {%- if section.settings.autoplay == "yes" -%}autoPlay: true,{%- endif -%} 
+      {%- if section.settings.infinitescroll == "yes" -%}
+        wrapAround: true,
+        freeScroll: true,
+      {%- endif -%} resize: true, }
+     
+    );
+  }
+
+
+  initializeFlickity();
+
+  // MutationObserver: figyelni fogja a DOM változásait
+  var observer = new MutationObserver(function (mutations) {
+    mutations.forEach(function (mutation) {
+      // Ha a változás az oszlopok méretét érinti (vagy bármi releváns változás), újra inicializáljuk a Flickity-t
+      if (mutation.type === 'attributes' || mutation.type === 'childList') {
+        initializeFlickity(); // Újra inicializáljuk a Flickity-t, ha változás történt
+      }
+    });
+  });
+
+  // Megfigyelés elindítása a szükséges elemeken (pl. a carousel wrapper elemén vagy bármi más releváns elem)
+  var config = { attributes: true, childList: true, subtree: true }; // Ez beállítja, hogy milyen változásokat figyeljen meg
+  var targetNode = document.querySelector('.carousel'); // Itt azt az elemet kell megadni, amelyik változásait figyelni akarod
+  observer.observe(targetNode, config);
+});
+
+    
+</script>
+-->
+{% schema %}
+{
+  "name": "Image",
+   "blocks": [
+    {
+      "type": "image",
+      "name": "Image",
+      "settings": [
+       {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Upload image"
+        }
+      ]
+    }
+   ],
+  "settings": [
+     {
+      "type": "richtext",
+      "id": "title",
+      "default": "<p>Title</p>",
+      "label": "t:sections.multicolumn.settings.title.label"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        {
+          "value": "h2",
+          "label": "t:sections.all.heading_size.options__1.label"
+        },
+        {
+          "value": "h1",
+          "label": "t:sections.all.heading_size.options__2.label"
+        },
+        {
+          "value": "h0",
+          "label": "t:sections.all.heading_size.options__3.label"
+        },
+        {
+          "value": "hxl",
+          "label": "t:sections.all.heading_size.options__4.label"
+        },
+        {
+          "value": "hxxl",
+          "label": "t:sections.all.heading_size.options__5.label"
+        }
+      ],
+      "default": "h1",
+      "label": "t:sections.all.heading_size.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "fullsize",
+      "default": false,
+      "label": "Full width?"
+    },
+    {
+      "type": "range",
+      "id": "image_size",
+      "min": 100,
+      "max": 1600,
+      "step": 100,
+      "unit": "px",
+      "label": "Max image size",
+      "default": 1200
+    },
+    {
+      "type": "select",
+      "id": "columns",
+      "label": "Number of columns on desktop",
+      "options": [
+        {
+          "value": "100",
+          "label": "1"
+        },
+        {
+          "value": "50",
+          "label": "2"
+        },
+        {
+          "value": "33",
+          "label": "3"
+        },
+        {
+          "value": "25",
+          "label": "4"
+        }
+      ],
+      "default": "25"
+    },
+    {
+      "type": "select",
+      "id": "autoplay",
+      "label": "Autoplay",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "yes",
+          "label": "Yes"
+        }
+      ],
+      "default": "yes"
+    },
+    {
+      "type": "select",
+      "id": "infinitescroll",
+      "label": "Infinite scroll",
+      "options": [
+        {
+          "value": "no",
+          "label": "No"
+        },
+        {
+          "value": "yes",
+          "label": "Yes"
+        }
+      ],
+      "default": "yes"
+    },
+    {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "color",
+      "id": "section_bgcolor",
+      "label": "Section background color",
+      "default": "rgba(0,0,0,0)"
+    },
+    {
+      "type": "color",
+      "id": "section_textcolor",
+      "label": "Section text color",
+      "default": "rgba(0,0,0,0)"
+    },
+    {
+        "type": "image_picker",
+        "id": "bg-image",
+        "label": "Background image"
+    },
+    {
+      "type": "select",
+      "id": "bg-size",
+      "label": "Background image size",
+      "options": [
+        {
+          "value": "contain",
+          "label": "Contain"
+        },
+        {
+          "value": "cover",
+          "label": "Cover"
+        }
+      ],
+      "default": "cover"
+    },
+    {
+      "type": "select",
+      "id": "bg-position",
+      "label": "Background image position",
+      "options": [
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        },
+        {
+          "value": "righttop",
+          "label": "Right top"
+        },
+        {
+          "value": "rightbottom",
+          "label": "Right bottom"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "lefttop",
+          "label": "Left top"
+        },
+        {
+          "value": "leftbottom",
+          "label": "Left bottom"
+        }   
+      ],
+      "default": "center"
+    },
+  ],
+  "presets": [
+    {
+      "name": "Gallery Slider - Extended",
+      "blocks": [
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
