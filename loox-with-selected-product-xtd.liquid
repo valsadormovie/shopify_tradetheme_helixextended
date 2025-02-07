@@ -1,0 +1,23 @@
+{% if section.settings.selected_product %}
+  <div style="max-width:1200px;margin:0 auto;"><div id="looxReviews" data-limit="30" data-product-id="{{ section.settings.selected_product.id }}" ></div></div>
+{% else %}
+  <p>Please select a product in the section settings.</p>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Loox Reviews ",
+  "settings": [
+    {
+      "type": "product",
+      "id": "selected_product",
+      "label": "Select a Product"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Loox Reviews with selected Product - Extended"
+    }
+  ]
+}
+{% endschema %}
