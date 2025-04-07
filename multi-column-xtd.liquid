@@ -42,7 +42,7 @@
   >
     {%- unless section.settings.title == blank -%}
       <div class="title-wrapper-with-link title-wrapper--self-padded-mobile title-wrapper--no-top-margin multicolumn__title">
-        <h2 class="title inline-richtext {{ section.settings.heading_size }}">
+        <h2 class="title inline-richtext {{ section.settings.heading_size }}" style="text-align: center;width: 100%;">
           {{ section.settings.title }}
         </h2>
         {%- if section.settings.button_label != blank and show_mobile_slider -%}
@@ -137,7 +137,7 @@
                 {%- endif -%}
                 {%- if block.settings.link_label != blank -%}
                   <a
-                    class="link animate-arrow"
+                    class="link animate-arrow button button--secondary"
                     {% if block.settings.link == blank %}
                       role="link" aria-disabled="true"
                     {% else %}
@@ -184,18 +184,52 @@
       {%- endif -%}
     </slider-component>
     <div class="center{% if show_mobile_slider %} small-hide medium-hide{% endif %}">
-      {%- if section.settings.button_label != blank -%}
-        <a
-          class="button button--primary"
-          {% if section.settings.button_link == blank %}
-            role="link" aria-disabled="true"
-          {% else %}
-            href="{{ section.settings.button_link }}"
-          {% endif %}
-        >
-          {{ section.settings.button_label | escape }}
-        </a>
+     
+    {%- if section.settings.button_mode == "simple" -%}
+     {%- if section.settings.button_label != blank -%}
+        {%- if section.settings.button_label != "Button label" -%}
+        	<a
+        	  {% if section.settings.button_link == blank %}
+        		role="link" aria-disabled="true"
+        	  {% else %}
+        		class="button{% if block.settings.button_style_secondary %} button--secondary{% else %} button--primary{% endif %}" href="{{ section.settings.button_link }}"
+        	  {% endif %}>
+                  
+        		  {{ section.settings.button_label | escape }}
+                  
+        		</a>
+          {%- endif -%}
       {%- endif -%}
+       
+	{%- else -%}
+		{%- if section.settings.button_selectmode == "landing" -%}
+			{% assign product = product %}                     
+		{%- else -%}
+			{% assign product = section.settings.product %}
+		{%- endif -%}
+						 
+							
+							 
+		{% if product and product.available %}
+          <div style="display:inline-block;max-width:250px;">
+		  {% assign product_form_id = 'quick-add-' | append: section.id | append: card_product.id %}
+		  {% render 'quick-add-xtd',
+			card_product: product,
+			product_form_id: product_form_id,
+			horizontal_quick_add: False,
+			qty_rules: qty_rules,
+			section_id: section.id,
+			quick_add: section.settings.quick_add,
+			section: section
+		  %}
+          </div>
+		{% else %}
+		  <p>A kiválasztott termék nem elérhető.</p>
+		{% endif %}
+                      
+    {%- endif -%}
+                    
+
     </div>
   </div>
 </div>
@@ -339,6 +373,43 @@
       "id": "button_link",
       "label": "t:sections.multicolumn.settings.button_link.label"
     },
+    {
+          "type": "select",
+          "id": "button_mode",
+          "options": [
+            {
+              "value": "simple",
+              "label": "Default"
+            },
+            {
+              "value": "addtocart",
+              "label": "Add to cart button"
+            }
+          ],
+          "default": "simple",
+          "label": "Button mode"
+        },
+        {
+          "type": "select",
+          "id": "button_selectmode",
+          "options": [
+            {
+              "value": "landing",
+              "label": "Landing product"
+            },
+            {
+              "value": "preselect",
+              "label": "Custom selected product"
+            }
+          ],
+          "default": "landing",
+          "label": "Add to cart product"
+        },
+         {
+          "type": "product",
+          "id": "product",
+          "label": "If add to cart button. Select cart product"
+        },
     {
       "type": "color_scheme",
       "id": "color_scheme",
