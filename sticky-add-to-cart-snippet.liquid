@@ -1,0 +1,109 @@
+ {%- liquid
+    if settings.show_currency_codes
+      assign iso_code = localization.country.currency.iso_code | prepend: ' ' 
+    endif
+  -%}
+
+  <sticky-add-to-cart
+    {% if product.has_only_default_variant %} data-single {% else %} data-multiple {% endif %}
+    data-id="product-{{ section.id }}"
+    class="sticky-add-to-cart sticky-add-to-cart--{{ section.settings.sticky_atc_style }}"
+    style="
+    --color-background-main: {{ section.settings.sticky_bar_bgcolor }};
+    --color-text-main: {{ section.settings.sticky_bar_txtcolor }};
+    "
+  > 
+    <div class="container container--large">
+      <div class="sticky-add-to-cart__inner">
+        <div class="sticky-add-to-cart__title"><span class="text-size--xlarge text-weight--bold">{{ product.title | escape }}</span></div>
+        <div class="sticky-add-to-cart__actions">
+          <div class="sticky-add-to-cart__price  text-size--large">
+            {%- if product.price_varies -%}
+              <span class="sticky-add-to-cart__price-varies">
+                {%- liquid
+                  echo current_variant.price | money | append: iso_code
+                -%}
+              </span>
+            {%- else -%}
+              <span class="sticky-add-to-cart__price-original text-weight--bold">{{ current_variant.price | money | append: iso_code }}</span>
+              {%- if current_variant.compare_at_price > current_variant.price -%}
+                <del class="sticky-add-to-cart__price-compare">{{ current_variant.compare_at_price | money | append: iso_code }}</del>
+              {%- endif -%}
+            {%- endif -%}
+          </div>
+          <div class="sticky-add-to-cart__button">
+            {%- if product.has_only_default_variant -%}
+              <button data-js-atc class="button button button--solid button--regular button--loader ">
+                <span class="button__text">Kosárba rakom</span>
+                <span class="button__preloader">
+                  <svg class="button__preloader-element" viewBox="25 25 50 50"><circle cx="50" cy="50" r="20" fill="none" stroke-width="4"/></svg>
+                </span>
+              </button>
+            {%- else -%}
+              <a href="#MainContent"><button data-js-choose class="button button button--solid button--regular button--loader"><span class="button__text"> Kosárba rakom </span></button></a>
+            {%- endif -%}
+          </div>
+        </div>
+      </div>
+    </div>
+  </sticky-add-to-cart>
+{% style %}
+  html {
+  scroll-behavior: smooth;
+}
+  .sticky-add-to-cart.visible {
+    display: block;
+    transform: translate(0);
+    transition: linear transform .2s;
+}
+
+.sticky-add-to-cart--floating.visible {
+    width: calc(100% - 2.5rem);
+}
+.sticky-add-to-cart--floating {
+    border-radius: clamp(0px, var(--border-radius-cards), 10px);
+    box-shadow: 0 0 8px #00000014;
+}
+.sticky-add-to-cart {
+       position: fixed;
+    bottom: 30px;
+    max-width: 700px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    z-index: 999;
+    background-color: #fff;
+    box-shadow: 0 -6px 8px #00000014;
+    padding: 20px;
+    /* transform: translateY(100%); */
+    color: #000;
+    border-radius: 10px;
+}    
+  .sticky-add-to-cart__inner {
+    display: grid;
+    grid-template-columns: auto auto;
+    align-items: center;
+    gap: var(--gutter-small);
+    padding: var(--gutter-small) 0;
+}
+  .sticky-add-to-cart__title {
+    line-height: 1;
+}
+  .sticky-add-to-cart__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--gutter-small) var(--gutter-regular);
+    justify-self: end;
+}
+  .sticky-add-to-cart__price {
+    display: flex;
+    margin-left: auto;
+    flex: 1 1 auto;
+    justify-content: start;
+    gap: .5rem;
+}
+  .sticky-add-to-cart__button {
+    margin-right: auto;
+    flex: 1 1 auto;
+}
+{% endstyle %}
