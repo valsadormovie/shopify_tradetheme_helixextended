@@ -2,6 +2,7 @@
   {{ 'quick-add.css' | asset_url | stylesheet_tag }}
   <script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
  <script src="{{ 'quick-add.js' | asset_url }}" defer="defer"></script>
+ 
 {% assign product_form_id = 'quick-add-' | append: section_id | append: card_product.id %}
 <div class="quick-add no-js-hidden">
             {%- liquid
@@ -99,5 +100,11 @@
           </div>
        
         
-
+{% style %} 
+  .quick-add__submit {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    margin-top: 20px;
+}
+{% endstyle %}
             
