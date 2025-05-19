@@ -70,6 +70,8 @@
           assign sizes = full_width
         endif
       -%}
+      
+      <div class="image_banner_xtd_slide_desktop">
       {{
         section.settings.image
         | image_url: width: 3840
@@ -81,7 +83,21 @@
           widths: widths,
           fetchpriority: fetch_priority
       }}
+      </div>
+      
+      <div class="image_banner_xtd_slide_mobile">
+      {{
+        section.settings.image_mobile
+        | image_url: width: 1920
+        | image_tag:
+          width: section.settings.image.width,
+          class: image_mobile_class,
+          fetchpriority: fetch_priority
+      }}
+      </div>
+      
     </div>
+ 
   {%- elsif section.settings.image_2 == blank -%}
     <div class="banner__media media{% if section.settings.image == blank and section.settings.image_2 == blank %} placeholder{% endif %}{% if section.settings.image_2 != blank %} banner__media-half{% endif %}{% if section.settings.image_behavior != 'none' %} animate--{{ section.settings.image_behavior }}{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
       {{ 'hero-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}
@@ -102,6 +118,7 @@
           assign sizes = full_width
         endif
       -%}
+      <div class="image_banner_xtd_slide_desktop">
       {{
         section.settings.image_2
         | image_url: width: 3840
@@ -113,8 +130,30 @@
           widths: widths,
           fetchpriority: fetch_priority
       }}
+      </div>
+
+      <div class="image_banner_xtd_slide_mobile">
+      {{
+        section.settings.image_2_mobile
+        | image_url: width: 1920
+        | image_tag:
+          class: image_2_mobile_class,
+          sizes: sizes,
+          widths: widths,
+          fetchpriority: fetch_priority
+      }}
+      </div>
+      
     </div>
   {%- endif -%}
+  
+   {% style %}
+     .image_banner_xtd_slide_mobile img, .image_banner_xtd_slide_desktop img {width: 100%; height: 100%; object-fit: cover; }
+     @media screen and (max-width: 741px) { .image_banner_xtd_slide_desktop img { display:none; }}
+     @media screen and (min-width: 740px) { .image_banner_xtd_slide_mobile img { display:none; }}
+   {% endstyle %}
+  
+  
   <div class="banner__content banner__content--{{ section.settings.desktop_content_position }} page-width{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
     <div class="banner__box content-container content-container--full-width-mobile color-{{ section.settings.color_scheme }} gradient">
       {%- for block in section.blocks -%}
@@ -176,14 +215,36 @@
   },
   "settings": [
     {
+      "type": "header",
+      "content": "First slide"
+    },
+    {
       "type": "image_picker",
       "id": "image",
       "label": "t:sections.image-banner.settings.image.label"
     },
     {
       "type": "image_picker",
+      "id": "image_mobile",
+      "label": "First image mobile"
+    },
+    {
+      "type": "header",
+      "content": "Second slide"
+    },
+    {
+      "type": "image_picker",
       "id": "image_2",
       "label": "t:sections.image-banner.settings.image_2.label"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile_2",
+      "label": "Second image mobile"
+    },
+    {
+      "type": "header",
+      "content": "Settings"
     },
     {
       "type": "range",
