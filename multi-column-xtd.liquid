@@ -42,9 +42,11 @@
   >
     {%- unless section.settings.title == blank -%}
       <div class="title-wrapper-with-link title-wrapper--self-padded-mobile title-wrapper--no-top-margin multicolumn__title">
-        <h2 class="title inline-richtext {{ section.settings.heading_size }}" style="text-align: center;width: 100%;">
+        <h2 class="title inline-richtext {{ section.settings.heading_size }}">
           {{ section.settings.title }}
         </h2>
+
+        <div class="inline-richtext description">{{ section.settings.desc }}</div>
         {%- if section.settings.button_label != blank and show_mobile_slider -%}
           <a href="{{ section.settings.button_link }}" class="link underlined-link large-up-hide">
             {{- section.settings.button_label | escape -}}
@@ -86,48 +88,79 @@
             {% endif %}
           >
             <div class="multicolumn-card content-container">
-              {%- if block.settings.image != blank -%}
-                {% if section.settings.image_ratio == 'adapt' or section.settings.image_ratio == 'circle' %}
-                  {% assign spaced_image = true %}
-                {% endif %}
-                <div class="multicolumn-card__image-wrapper multicolumn-card__image-wrapper--{{ section.settings.image_width }}-width{% if section.settings.image_width != 'full' or spaced_image %} multicolumn-card-spacing{% endif %}">
-                  <div
-                    class="media media--transparent media--{{ section.settings.image_ratio }}"
-                    {% if section.settings.image_ratio == 'adapt' %}
-                      style="padding-bottom: {{ 1 | divided_by: highest_ratio | times: 100 }}%;"
-                    {% endif %}
-                  >
-                    {%- liquid
-                      assign number_of_columns = section.settings.columns_desktop
-                      assign number_of_columns_mobile = section.settings.columns_mobile
-                      assign grid_space_desktop = number_of_columns | minus: 1 | times: settings.spacing_grid_horizontal | plus: 100 | append: 'px'
-                      assign grid_space_tablet = number_of_columns_mobile | minus: 1 | times: settings.spacing_grid_horizontal | plus: 100 | append: 'px'
-                      assign grid_space_mobile = number_of_columns_mobile | minus: 1 | times: settings.spacing_grid_horizontal | divided_by: 2 | plus: 30 | append: 'px'
-                      if section.settings.image_width == 'half'
-                        assign image_width = 0.5
-                      elsif section.settings.image_width == 'third'
-                        assign image_width = 0.33
-                      else
-                        assign image_width = 1
-                      endif
-                    -%}
-                    {% capture sizes %}
-                      (min-width: {{ settings.page_width }}px) calc(({{ settings.page_width }}px - {{ grid_space_desktop }}) * {{ image_width }} /  {{ number_of_columns }}),
-                      (min-width: 990px) calc((100vw - {{ grid_space_desktop }}) * {{ image_width }} / {{ number_of_columns }}),
-                      (min-width: 750px) calc((100vw - {{ grid_space_tablet }}) * {{ image_width }} / {{ number_of_columns_mobile }}),
-                      calc((100vw - {{ grid_space_mobile }}) * {{ image_width }} / {{ number_of_columns_mobile }})
-                    {% endcapture %}
-                    {{
-                      block.settings.image
-                      | image_url: width: 3200
-                      | image_tag:
-                        widths: '50, 75, 100, 150, 200, 300, 400, 500, 750, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000, 3200',
-                        sizes: sizes,
-                        class: 'multicolumn-card__image'
-                    }}
+          
+              {%- if block.settings.modeselect == "imagemode" -%}
+
+                
+                {%- if block.settings.image != blank -%}
+                  {% if section.settings.image_ratio == 'adapt' or section.settings.image_ratio == 'circle' %}
+                    {% assign spaced_image = true %}
+                  {% endif %}
+                  <div class="multicolumn-card__image-wrapper multicolumn-card__image-wrapper--{{ section.settings.image_width }}-width{% if section.settings.image_width != 'full' or spaced_image %} multicolumn-card-spacing{% endif %}">
+                    <div
+                      class="media media--transparent media--{{ section.settings.image_ratio }}"
+                      {% if section.settings.image_ratio == 'adapt' %}
+                        style="padding-bottom: {{ 1 | divided_by: highest_ratio | times: 100 }}%;"
+                      {% endif %}
+                    >
+                      {%- liquid
+                        assign number_of_columns = section.settings.columns_desktop
+                        assign number_of_columns_mobile = section.settings.columns_mobile
+                        assign grid_space_desktop = number_of_columns | minus: 1 | times: settings.spacing_grid_horizontal | plus: 100 | append: 'px'
+                        assign grid_space_tablet = number_of_columns_mobile | minus: 1 | times: settings.spacing_grid_horizontal | plus: 100 | append: 'px'
+                        assign grid_space_mobile = number_of_columns_mobile | minus: 1 | times: settings.spacing_grid_horizontal | divided_by: 2 | plus: 30 | append: 'px'
+                        if section.settings.image_width == 'half'
+                          assign image_width = 0.5
+                        elsif section.settings.image_width == 'third'
+                          assign image_width = 0.33
+                        else
+                          assign image_width = 1
+                        endif
+                      -%}
+                      {% capture sizes %}
+                        (min-width: {{ settings.page_width }}px) calc(({{ settings.page_width }}px - {{ grid_space_desktop }}) * {{ image_width }} /  {{ number_of_columns }}),
+                        (min-width: 990px) calc((100vw - {{ grid_space_desktop }}) * {{ image_width }} / {{ number_of_columns }}),
+                        (min-width: 750px) calc((100vw - {{ grid_space_tablet }}) * {{ image_width }} / {{ number_of_columns_mobile }}),
+                        calc((100vw - {{ grid_space_mobile }}) * {{ image_width }} / {{ number_of_columns_mobile }})
+                      {% endcapture %}
+                      {{
+                        block.settings.image
+                        | image_url: width: 3200
+                        | image_tag:
+                          widths: '50, 75, 100, 150, 200, 300, 400, 500, 750, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000, 3200',
+                          sizes: sizes,
+                          class: 'multicolumn-card__image'
+                      }}
+                    </div>
                   </div>
-                </div>
-              {%- endif -%}
+                {%- endif -%}
+
+
+              
+            {%- elsif block.settings.modeselect == "videomode" -%}
+             {%- liquid
+              
+                unless block.settings.image == blank
+                    echo '<video width="100%" style="object-fit: cover;pointer-events: none;" autoplay loop muted playsinline poster="https://btjwxs-xu.myshopify.com/cdn/shop/files/' | append: block.settings.image | append: '">'
+                  else
+                    echo '<video width="100%" style="object-fit: cover;pointer-events: none;" autoplay loop muted playsinline poster="https://i.ytimg.com/vi/_9VUPq3SxOc/hqdefault.jpg">'
+                endunless
+                        
+                unless block.settings.videomp4 == blank
+                  echo '<source src="' | append: block.settings.videomp4.sources[1].url | append: '" type="video/mp4">'
+                endunless
+              
+                echo '</video>'
+              -%}
+
+            {%- elsif block.settings.modeselect == "liquidmode" -%}
+                
+                  {{ block.settings.custom_liquid }}
+              
+            {%- endif -%}
+
+              
+              
               <div class="multicolumn-card__info">
                 {%- if block.settings.title != blank -%}
                   <h3 class="inline-richtext">{{ block.settings.title }}</h3>
@@ -137,7 +170,7 @@
                 {%- endif -%}
                 {%- if block.settings.link_label != blank -%}
                   <a
-                    class="link animate-arrow button button--secondary"
+                    class="link animate-arrow"
                     {% if block.settings.link == blank %}
                       role="link" aria-disabled="true"
                     {% else %}
@@ -184,52 +217,18 @@
       {%- endif -%}
     </slider-component>
     <div class="center{% if show_mobile_slider %} small-hide medium-hide{% endif %}">
-     
-    {%- if section.settings.button_mode == "simple" -%}
-     {%- if section.settings.button_label != blank -%}
-        {%- if section.settings.button_label != "Button label" -%}
-        	<a
-        	  {% if section.settings.button_link == blank %}
-        		role="link" aria-disabled="true"
-        	  {% else %}
-        		class="button{% if block.settings.button_style_secondary %} button--secondary{% else %} button--primary{% endif %}" href="{{ section.settings.button_link }}"
-        	  {% endif %}>
-                  
-        		  {{ section.settings.button_label | escape }}
-                  
-        		</a>
-          {%- endif -%}
+      {%- if section.settings.button_label != blank -%}
+        <a
+          class="button button--primary"
+          {% if section.settings.button_link == blank %}
+            role="link" aria-disabled="true"
+          {% else %}
+            href="{{ section.settings.button_link }}"
+          {% endif %}
+        >
+          {{ section.settings.button_label | escape }}
+        </a>
       {%- endif -%}
-       
-	{%- else -%}
-		{%- if section.settings.button_selectmode == "landing" -%}
-			{% assign product = product %}                     
-		{%- else -%}
-			{% assign product = section.settings.product %}
-		{%- endif -%}
-						 
-							
-							 
-		{% if product and product.available %}
-          <div style="display:inline-block;max-width:250px;">
-		  {% assign product_form_id = 'quick-add-' | append: section.id | append: card_product.id %}
-		  {% render 'quick-add-xtd',
-			card_product: product,
-			product_form_id: product_form_id,
-			horizontal_quick_add: False,
-			qty_rules: qty_rules,
-			section_id: section.id,
-			quick_add: section.settings.quick_add,
-			section: section
-		  %}
-          </div>
-		{% else %}
-		  <p>A kiválasztott termék nem elérhető.</p>
-		{% endif %}
-                      
-    {%- endif -%}
-                    
-
     </div>
   </div>
 </div>
@@ -248,6 +247,11 @@
       "id": "title",
       "default": "t:sections.multicolumn.settings.title.default",
       "label": "t:sections.multicolumn.settings.title.label"
+    },
+    {
+      "type": "richtext",
+      "id": "desc",
+      "label": "Description"
     },
     {
       "type": "select",
@@ -365,7 +369,6 @@
     {
       "type": "text",
       "id": "button_label",
-      "default": "t:sections.multicolumn.settings.button_label.default",
       "label": "t:sections.multicolumn.settings.button_label.label"
     },
     {
@@ -373,43 +376,6 @@
       "id": "button_link",
       "label": "t:sections.multicolumn.settings.button_link.label"
     },
-    {
-          "type": "select",
-          "id": "button_mode",
-          "options": [
-            {
-              "value": "simple",
-              "label": "Default"
-            },
-            {
-              "value": "addtocart",
-              "label": "Add to cart button"
-            }
-          ],
-          "default": "simple",
-          "label": "Button mode"
-        },
-        {
-          "type": "select",
-          "id": "button_selectmode",
-          "options": [
-            {
-              "value": "landing",
-              "label": "Landing product"
-            },
-            {
-              "value": "preselect",
-              "label": "Custom selected product"
-            }
-          ],
-          "default": "landing",
-          "label": "Add to cart product"
-        },
-         {
-          "type": "product",
-          "id": "product",
-          "label": "If add to cart button. Select cart product"
-        },
     {
       "type": "color_scheme",
       "id": "color_scheme",
@@ -478,11 +444,36 @@
       "type": "column",
       "name": "t:sections.multicolumn.blocks.column.name",
       "settings": [
+            {
+          "type": "select",
+          "id": "modeselect",
+          "options": [
+            {
+              "value": "imagemode",
+              "label": "Image mode"
+            },
+            {
+              "value": "videomode",
+              "label": "Video mode"
+            },
+            {
+              "value": "liquidmode",
+              "label": "Liquid code mode"
+            }
+          ],
+          "default": "imagemode",
+          "label": "MODE"
+        },
         {
           "type": "image_picker",
           "id": "image",
           "label": "t:sections.multicolumn.blocks.column.settings.image.label"
         },
+        {
+      "id": "videomp4",
+      "type": "video",
+      "label": "Video MP4 format"
+    },
         {
           "type": "inline_richtext",
           "id": "title",
@@ -504,7 +495,14 @@
           "type": "url",
           "id": "link",
           "label": "t:sections.multicolumn.blocks.column.settings.link.label"
+        }, 
+        {
+          "type": "liquid",
+          "id": "custom_liquid",
+          "label": "t:sections.custom-liquid.settings.custom_liquid.label"
         }
+
+        
       ]
     }
   ],
